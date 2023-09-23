@@ -52,10 +52,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
     update_option('quiz_answers', $existing_answers);
     
-    // Return the score as a JSON response and exit
-    header('Content-Type: application/json');
-    echo json_encode(['success' => true, 'score' => $score]);
-    exit;
+     // Initialize an array to hold the incorrect answers
+     $incorrect_answers = [];
+    
+     // Compare received answers with correct ones and calculate the score
+     foreach ($correct_answers as $question => $correct_answer) {
+         if (!isset($data['answers'][$question]) || $data['answers'][$question] != $correct_answer) {
+             $incorrect_answers[$question] = $correct_answer;
+         } else {
+             $score++;
+         }
+     }
+     
+    // Return the score, incorrect answers, and whether the quiz submission was successful as a JSON response
+header('Content-Type: application/json');
+echo json_encode([
+    'success' => true,
+    'score' => $score,
+    'incorrect_answers' => $incorrect_answers,
+    'total_questions' => count($correct_answers) // Sending total number of questions
+]);
+
+
+     exit;
+ 
 }
 
 // Display the quiz form
@@ -107,7 +127,7 @@ get_header();
             <label><input type="radio" name="q5" value="c"> Border</label>
             <label><input type="radio" name="q5" value="d"> Width</label>
         </fieldset>
-        
+
         <fieldset>
     <legend>6. Which HTML tag is used to embed JavaScript in a web page?</legend>
     <label><input type="radio" name="q6" value="a" required> &lt;java&gt;</label>
@@ -195,12 +215,19 @@ const data = {
     .then(data => {
         // Handle the response from the server
         console.log('Received Data:', data);
-        if (data.success) {
-            alert('Quiz submitted successfully! Your score is: ' + data.score);
-        } else {
-            alert('There was an error submitting the quiz.');
+        
+        let feedbackMessage = `Quiz submitted successfully! Your score is: ${data.score} out of ${data.total_questions}.\n`;
+        
+        if (Object.keys(data.incorrect_answers).length > 0) {
+            feedbackMessage += 'The following answers are incorrect:\n';
+            for (const [question, correctAnswer] of Object.entries(data.incorrect_answers)) {
+                feedbackMessage += `Question ${question.replace('q', '')}: Correct answer is ${correctAnswer}\n`;
+            }
         }
+        
+        alert(feedbackMessage);
     })
+
     .catch(error => {
         console.error('Error during fetch operation: ', error);
         alert('There was an error submitting the quiz.');
