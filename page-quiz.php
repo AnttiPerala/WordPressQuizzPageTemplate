@@ -237,4 +237,41 @@ const data = {
 </script>
 
 <?php
+if (current_user_can('administrator')) {
+    $quiz_answers = get_option('quiz_answers', []);
+    if (!empty($quiz_answers)) {
+        echo '<style>';
+        echo 'table { width: 100%; border-collapse: collapse; }';
+        echo 'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }';
+        echo 'th { background-color: #4CAF50; color: white; }';
+        echo 'ul { list-style-type: none; padding: 0; }';
+        echo '.question { font-weight: bold; color: #333; }';
+        echo '.value { color: #666; }';
+        echo '</style>';
+        
+        echo '<table>';
+        echo '<tr><th>Name</th><th>Answers</th><th>Score</th></tr>';
+        foreach ($quiz_answers as $answer) {
+            echo '<tr>';
+            echo '<td>' . esc_html($answer['name']) . '</td>';
+            
+            echo '<td>';
+            echo '<ul>';
+            foreach ($answer['answers'] as $question => $selected_answer) {
+                echo '<li><span class="question">' . esc_html($question) . ':</span> <span class="value">' . esc_html($selected_answer) . '</span></li>';
+            }
+            echo '</ul>';
+            echo '</td>';
+            
+            echo '<td>' . esc_html($answer['score']) . '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+    } else {
+        echo '<p>No quiz results found.</p>';
+    }
+}
+
+
+
 get_footer();

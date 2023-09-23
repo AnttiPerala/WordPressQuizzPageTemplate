@@ -83,3 +83,22 @@ Theme by Antti Perälä, (C) 2023 tuni.fi
         background-color: #218838; /* Darker accent color for hover effect */
     }
 
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+   table li {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+
