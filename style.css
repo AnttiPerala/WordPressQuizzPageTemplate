@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+/*
+Theme Name: Quiz
+Theme URI: https://tuni.fi
+Author: Antti Perälä
+Author URI: https://tuni.fi
+Description: For displaying recipes and nutritional information
+Requires at least: 5.3
+Tested up to: 5.6
+Requires PHP: 5.6
+Version: 0.1
+License: All rigths reserved
+License URI: 
+Text Domain: myrecipes
+Tags: food, recipes
+
+Theme by Antti Perälä, (C) 2023 tuni.fi
+
+*/
+
+@import url('dygraph.css');
+
+body {
+
+font-family: Arial, Helvetica, sans-serif;
+margin: 0;
+
+}
+
