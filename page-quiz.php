@@ -269,33 +269,41 @@ if (current_user_can('administrator')) {
             }
             echo '</table>';
 
-        echo '<style>';
-        echo 'table { width: 100%; border-collapse: collapse; }';
-        echo 'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }';
-        echo 'th { background-color: #4CAF50; color: white; }';
-        echo 'ul { list-style-type: none; padding: 0; }';
-        echo '.question { font-weight: bold; color: #333; }';
-        echo '.value { color: #666; }';
-        echo '</style>';
-        
-        echo '<table>';
-        echo '<tr><th>Name</th><th>Answers</th><th>Score</th></tr>';
-        foreach ($quiz_answers as $answer) {
-            echo '<tr>';
-            echo '<td>' . esc_html($answer['name']) . '</td>';
+            echo '<style>';
+            echo 'table { width: 100%; border-collapse: collapse; }';
+            echo 'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }';
+            echo 'th { background-color: #4CAF50; color: white; }';
+            echo 'ul { list-style-type: none; padding: 0; }';
+            echo '.question { font-weight: bold; color: #333; }';
+            echo '.value { color: #666; }';
+            echo '</style>';
             
-            echo '<td>';
-            echo '<ul>';
-            foreach ($answer['answers'] as $question => $selected_answer) {
-                echo '<li><span class="question">' . esc_html($question) . ':</span> <span class="value">' . esc_html($selected_answer) . '</span></li>';
+            echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+            echo '<input type="hidden" name="action" value="my_delete_handler" />';
+            echo wp_nonce_field('delete_quiz_answers_action', 'delete_quiz_answers_nonce');
+
+            echo '<table>';
+            echo '<tr><th>Select</th><th>Name</th><th>Answers</th><th>Score</th></tr>'; // Added 'Select' column header
+            foreach ($quiz_answers as $key => $answer) { // Assuming $quiz_answers is an associative array and $key is a unique identifier for each row.
+                echo '<tr>';
+                echo '<td><input type="checkbox" name="delete[]" value="' . esc_attr($key) . '"></td>'; // Checkbox for each row
+                echo '<td>' . esc_html($answer['name']) . '</td>';
+                
+                echo '<td>';
+                echo '<ul>';
+                foreach ($answer['answers'] as $question => $selected_answer) {
+                    echo '<li><span class="question">' . esc_html($question) . ':</span> <span class="value">' . esc_html($selected_answer) . '</span></li>';
+                }
+                echo '</ul>';
+                echo '</td>';
+                
+                echo '<td>' . esc_html($answer['score']) . '</td>';
+                echo '</tr>';
             }
-            echo '</ul>';
-            echo '</td>';
+            echo '</table>';
+            echo '<input type="submit" value="Delete Selected">'; // Delete button
+            echo '</form>';
             
-            echo '<td>' . esc_html($answer['score']) . '</td>';
-            echo '</tr>';
-        }
-        echo '</table>';
     } else {
         echo '<p>No quiz results found.</p>';
     }
