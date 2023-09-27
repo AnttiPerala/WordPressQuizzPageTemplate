@@ -6,16 +6,17 @@
 // Define the correct answers.
 $correct_answers = [
     'q1' => 'b', // <link> is used to link a CSS file
-    'q2' => 'c', // function myFunction() is how you create a function in JavaScript
+    'q2' => 'd', // href="" attribute defines the url
     'q3' => 'c', // font-size controls the text size in CSS
     'q4' => 'd', // JavaScript is primarily used to add interactivity to a web page
     'q5' => 'a', // Padding is used to add space inside an element
     'q6' => 'c', // <script> is used to embed JavaScript in a web page
     'q7' => 'c', // onclick is the JavaScript event fired when a user clicks on an HTML element
     'q8' => 'a', // .class is used to select elements with a specific class in CSS
-    'q9' => 'd', // margin: 0 auto; is used to center an element horizontally in CSS
+    'q9' => 'c', // p.help selects a paragraph with the class help
     'q10' => 'b' // style is the HTML attribute used to specify inline styles
 ];
+
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,11 +98,11 @@ get_header();
             </fieldset>
 
             <fieldset>
-                <legend>2. How do you create a function in JavaScript?</legend>
-                <label><input type="radio" name="q2" value="a">function:myFunction()</label>
-                <label><input type="radio" name="q2" value="b">function = myFunction()</label>
-                <label><input type="radio" name="q2" value="c">function myFunction()</label>
-                <label><input type="radio" name="q2" value="d">myFunction():function</label>
+                <legend>2. Which attribute in a link tag specifies the URL?</legend>
+                <label><input type="radio" name="q2" value="a">link=""</label>
+                <label><input type="radio" name="q2" value="b">src=""</label>
+                <label><input type="radio" name="q2" value="c">anchor=""</label>
+                <label><input type="radio" name="q2" value="d">href=""</label>
             </fieldset>
 
             <fieldset>
@@ -154,11 +155,11 @@ get_header();
         </fieldset>
 
         <fieldset>
-            <legend>9. Which of the following CSS rules centers an element horizontally?</legend>
-            <label><input type="radio" name="q9" value="a" required> text-align: center;</label>
-            <label><input type="radio" name="q9" value="b"> align: center;</label>
-            <label><input type="radio" name="q9" value="c"> horizontal-align: center;</label>
-            <label><input type="radio" name="q9" value="d"> margin: 0 auto;</label>
+            <legend>9. Which of the following CSS selectors selects a paragraph with the class help?</legend>
+            <label><input type="radio" name="q9" value="a" required>paragraph .help</label>
+            <label><input type="radio" name="q9" value="b"> p#help</label>
+            <label><input type="radio" name="q9" value="c"> p.help</label>
+            <label><input type="radio" name="q9" value="d"> #help>p</label>
         </fieldset>
 
             <fieldset>
@@ -240,6 +241,34 @@ const data = {
 if (current_user_can('administrator')) {
     $quiz_answers = get_option('quiz_answers', []);
     if (!empty($quiz_answers)) {
+
+        if (!empty($quiz_answers)) {
+            // Initialize an array to hold the count of wrong answers for each question.
+            $wrong_answers_count = [];
+            
+            foreach ($quiz_answers as $answer) {
+                foreach ($correct_answers as $question => $correct_answer) {
+                    if (!isset($answer['answers'][$question]) || $answer['answers'][$question] != $correct_answer) {
+                        // Increment the count of wrong answers for the question.
+                        if (!isset($wrong_answers_count[$question])) {
+                            $wrong_answers_count[$question] = 0;
+                        }
+                        $wrong_answers_count[$question]++;
+                    }
+                }
+            }
+            
+            // Display the table with counts of wrong answers.
+            echo '<table>';
+            echo '<tr><th>Question</th><th>Wrong Answers Count</th></tr>';
+            foreach ($wrong_answers_count as $question => $count) {
+                echo '<tr>';
+                echo '<td>' . esc_html($question) . '</td>';
+                echo '<td>' . esc_html($count) . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+
         echo '<style>';
         echo 'table { width: 100%; border-collapse: collapse; }';
         echo 'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }';
@@ -270,6 +299,7 @@ if (current_user_can('administrator')) {
     } else {
         echo '<p>No quiz results found.</p>';
     }
+}
 }
 
 
